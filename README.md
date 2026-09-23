@@ -76,6 +76,39 @@ mvn test
   dedupe retry, reject bad signature (nothing stored), reject malformed payload,
   history ordering.
 
+## Run with Docker
+
+```bash
+docker compose up --build
+```
+
+Builds the image (multi-stage: Maven+JDK to compile, slim JRE to run) and starts
+it alongside a real Postgres container, with `WEBHOOK_SECRET=dev-secret`.
+
+## Deploy (Render free tier)
+
+```
+┌──────────────┐   push    ┌────────────────┐   JDBC    ┌──────────────────┐
+│ GitHub repo   │ ────────▶ │ Render Web      │ ────────▶ │ Render Postgres   │
+│ (Dockerfile)  │  builds   │ Service (free)  │           │ (free tier)       │
+└──────────────┘   image   └────────────────┘           └──────────────────┘
+```
+
+1. Push this repo to GitHub.
+2. On [render.com](https://render.com): **New +** → **PostgreSQL** → free plan → name it
+   `order-webhook-db` → create. Copy **Host**, **Port**, **Database**, **User**, **Password**
+   from its Info tab.
+3. **New +** → **Web Service** → connect the GitHub repo → Environment: **Docker** → plan: **Free**.
+4. Add environment variables:
+   - `SPRING_PROFILES_ACTIVE=postgres`
+   - `DB_URL=jdbc:postgresql://<host>:<port>/<database>`
+   - `DB_USER=<user>`
+   - `DB_PASSWORD=<password>`
+   - `WEBHOOK_SECRET=<a real secret, not dev-secret>`
+5. Deploy. Free web services sleep after 15 min idle (~30-50s to wake on the next
+   request) and free Postgres instances expire after 30 days — recreate the
+   database and update the env vars above when that happens, no code changes needed.
+
 ## Next steps (portfolio series)
 
 1. Catalog Sync API
