@@ -1,5 +1,10 @@
 # Order Webhook Receiver
 
+**Live demo:** https://order-webhook-receiver.onrender.com (free tier — sleeps after
+15 min idle, first request after that takes ~30-50s to wake up). POST a signed
+webhook to `/webhooks/orders` per the example below, then GET
+`/api/orders/{orderId}/events` to see it stored.
+
 Receives order status webhooks in the shape VTEX's Orders Hook sends, verifies an
 HMAC-SHA256 signature on every request, and stores each status change as an event
 you can query per order. Built as a portfolio piece to show the inbound side of an
