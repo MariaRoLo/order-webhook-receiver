@@ -5,6 +5,8 @@
 webhook to `/webhooks/orders` per the example below, then GET
 `/api/orders/{orderId}/events` to see it stored.
 
+![signed webhook accepted, retried (deduped), rejected on bad signature](docs/demo.gif)
+
 Receives order status webhooks in the shape VTEX's Orders Hook sends, verifies an
 HMAC-SHA256 signature on every request, and stores each status change as an event
 you can query per order. Built as a portfolio piece to show the inbound side of an
